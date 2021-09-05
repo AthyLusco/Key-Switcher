@@ -1,0 +1,41 @@
+.keyButtons {
+  width: 25%;
+  text-align: center;
+  width: 295px;
+  height: 295px;
+  margin: 5px;
+}
+
+.keyButtons:active,
+.keyButtons.active,
+.keyButtons:focus {
+  background: #292b2c;
+  color: #292b2c;
+}
+
+#output {
+  font-size: 150px;
+}
+
+.center-div {
+  display: block;
+  margin: 0 auto;
+  float: none;
+}
+
+i {
+  background: url("Key Switcher.ico");
+  display: block;
+  height: 50px;
+  width: 50px;
+  background-size: contain;
+}
+
+.navbar-toggler-icon {
+  background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+strong {
+  color: white;
+  font-size: 25px;
+}

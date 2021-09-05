@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+    <title>Random Play</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="Key Switcher.ico">
+<link rel="stylesheet" 
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="key_switcher.css">
+<script 
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script 
+src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script 
+src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+<header>
+    <nav class="navbar navbar-dark bg-dark">
+        <i></i>
+        <strong>Key Switcher</strong>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTarget" >
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="navbar-collapse collapse" id="navbarTarget">
+            <h5 class="text-white">About</h5>
+            <p class="text-white">This is a web application which allows users to select keys, adding them to a pool and
+                select a time delay between the switching of our keys. There may be more possible use cases for this other than scale or chord progressions,
+                so see how far you can get with this program... If you would like to, of course.
+                If there are comments, questions or ideas contact me @alusco27@gmail.com.enjoy~
+        </div>
+    
+    </nav>
+    
+</header>
+
+<script>
+var timerId;
+var lastIndex = -1;
+var sound;
+var chosenFiles = [];
+var btnState = false;
+var stopBtnState = false;
+
+var files = [
+{name:'A.mp3', desc:'A'},
+    
+{name:'Bb.mp3', desc:'Bb'},
+    
+{name:'B.mp3',  desc:'B'},
+    
+{name:'C.mp3', desc:'C'},
+    
+{name:'Db.mp3', desc:'Db'},
+    
+{name:'D.mp3', desc:'D'},
+
+{name:'Eb.mp3', desc:'Eb'},
+
+{name:'E.mp3', desc:'E'},
+
+{name:'F.mp3', desc:'F'},
+
+{name:'Gb.mp3', desc:'Gb'},
+
+{name:'G.mp3', desc:'G'},
+
+{name:'Ab.mp3', desc:'Ab'},
+];
+
+function startPlaying()//Starts the countdown
+{
+    delay = document.getElementById("delay")
+    input = document.getElementById("inputWarning")
+    button = document.getElementById("buttonsWarning")
+
+    delayValue = delay.value;
+
+    delInput = null;
+    cfInput = null;
+
+    //To make sure the user has put in a number
+    if(((delay.value.length > 0 && !(isNaN(delayValue))))){
+        if(delayValue < 1){
+            input.innerHTML = "Please enter a higher number in the delay.";
+            input.style.color = "#FF0000";
+            delInput = false;
+        }else{
+            input.innerHTML = "";
+            delInput = true;
+        }
+    }else{
+        input.innerHTML = "Please enter a valid number in the delay.";
+        input.style.color = "#FF0000";
+        delInput = false;
+    }
+
+    //To make sure user has chosen files
+    if(chosenFiles.length > 0){
+        button.innerHTML = "";
+        cfInput = true;
+    }else{
+        button.innerHTML = "Please choose at least one key.";
+        button.style.color = "#FF0000";
+        cfInput = false;
+    }
+
+    if(delInput && cfInput){
+        var delay = Number(document.getElementById("delay").value);
+        clearInterval(timerId);
+        timerId = setInterval(onTimeout, delay * 1000);
+    }
+    
+}
+
+function onTimeout()//Execute the audio and visual cue for the key on countdown 
+{
+    stopBtnState = false;
+    output = document.getElementById("output")
+    if ( sound ) {
+       sound.pause();
+    }
+    var index = lastIndex;
+    index = Math.floor(Math.random() * chosenFiles.length);
+
+    output.innerHTML = "File " + index;
+    sound = new Audio(chosenFiles[index].name);
+    lastIndex = index;
+    sound.play();
+    output.innerHTML = chosenFiles[index].desc;
+}
+
+function allButtons(){//Toggles all buttons
+    buttons = document.querySelectorAll('.keyButtons')
+    
+    if(btnState == false){//Activates all buttons
+        chosenFiles = files;
+        $(buttons).toggleClass('active');
+        btnState = true;
+        return;
+    }
+    if(btnState == true && stopBtnState == true){//Deactivates all buttons
+        chosenFiles = [];
+        for(i = 0; i < buttons.length; i++){
+            btn = buttons[i];
+            if ($(btn).hasClass("active")) {
+                 btn.classList.remove("active");
+             }
+        }
+        btnState = false;
+        return;
+    }
+}
+
+function stopState(){//Checks the state of our stop button using booleans
+    if(stopBtnState == false){
+        stopBtnState = true;
+        return;
+    }
+}
+
+$(document).ready(function(){//Toggles single buttons, one at a time
+    $('.keyButtons').click(function() {
+        ids = this.id;
+        ids = ids.slice(ids.length - 2);
+        if(ids < 10){ ids = ids.slice(ids.length - 1);}
+        fileLen = chosenFiles.length;
+
+        if($(this).hasClass("active")){//Removes individual button from active buttons
+            if(fileLen > 1 || (fileLen == 1 && stopBtnState == true)){
+                chosenFiles.splice(chosenFiles.findIndex(file => file.desc == this.textContent), 1);
+                this.classList.remove("active");
+            }
+            else{
+                return;
+            }
+            
+        }
+        else{//Adds individual button to active buttons
+            $(this).toggleClass('active');
+            chosenFiles.push(files[ids]);
+        }
+    });
+});
+
+</script>
+<div class="container-fluid">
+
+<h1></h1>
+<br>
+<div class="text-center " role="group">
+    <div class="input-group mb-3 center-div">
+        <input class="text-center" type="text" id="delay" placeholder="Delay, i.e 5(s)" aria-describedby="addon" >
+        <br/>
+        <p id="inputWarning"></p>
+    </div>
+    <br/>
+    
+    <div class="btn-group-justified text-center flex-wrap">
+        <button class="delButtons btn-secondary btn-lg" onclick="startPlaying()">Start</button>
+        <button class="delButtons btn-secondary btn-lg" onclick="clearInterval(timerId);stopState()">Stop</button>
+        <button class="delButtons btn-secondary btn-lg" onclick="allButtons()">All Keys</button>
+    </div>
+    <br/>
+    <p id="output"></p>
+    <p id="buttonsWarning"></p>
+</div>
+
+<hr>
+<div class="btn-group-justified text-center flex-wrap m-2" role="group">
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in03">C</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in04">Db</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in05">D</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in06">Eb</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in07">E</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in08">F</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in09">Gb</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in10">G</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in11">Ab</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in00">A</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in01">Bb</button>
+    <button type="button" class="keyButtons btn btn-outline-dark btn-lg p-5" id="in02">B</button>
+<address></address>
+</div>
+</div>
+</body> 
+</html>
